@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_margin="20dp"
+		android:text="人脸采集"
+		android:textColor="@color/colorPrimary"
+		android:textSize="22sp"/>
+	<!--<SurfaceView-->
+	<!--android:id="@+id/sv_face"-->
+	<!--android:layout_width="match_parent"-->
+	<!--android:layout_height="match_parent"/>-->
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:gravity="center"
+		android:orientation="vertical">
+
+		<com.xwr.smarttermin.view.CircleCameraPreview
+			android:id="@+id/sv_face"
+			android:layout_width="350dp"
+			android:layout_height="350dp"
+			android:background="@android:color/transparent"
+			/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="30dp"
+			android:text="请将人脸至于摄像范围内"
+			android:textSize="18sp"/>
+
+
+	</LinearLayout>
+
+	<Button
+		android:id="@+id/btn_take_photo"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentBottom="true"
+		android:layout_margin="10dp"
+		android:background="@drawable/btn_fillet"
+		android:text="注册人脸"
+		android:textColor="@color/colorWhite"/>
+</RelativeLayout>
