@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 import com.xwr.mulkeyboard.HexUtil;
-import com.xwr.mulkeyboard.usbapi.USBDevice;
+import com.xwr.mulkeyboard.usbapi.UDevice;
 import com.xwr.mulkeyboard.usbapi.UsbApi;
 import com.xwr.mulkeyboard.utils.UsbUtil;
 import com.xwr.smarthosptial.R;
@@ -85,9 +85,9 @@ public class IccFrag extends BaseFragment {
   public void onResume() {
     super.onResume();
     println("onResume");
-    if (USBDevice.mDeviceConnection == null) {
+    if (UDevice.mDeviceConnection == null) {
       try {
-        UsbUtil.getInstance(getContext()).initUsbData();
+        UsbUtil.getInstance(getContext()).initUsbData(0xffff, 0xffff);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
@@ -98,7 +98,7 @@ public class IccFrag extends BaseFragment {
       e.printStackTrace();
     }
 
-    if (USBDevice.mDeviceConnection != null) {
+    if (UDevice.mDeviceConnection != null) {
       initReadData();
     } else {
       UiUtil.showToast(getContext(), "请设置USB权限");
@@ -129,7 +129,7 @@ public class IccFrag extends BaseFragment {
     public void run() {
       while (mRunning) {
         //初始化
-        ret = UsbApi.Reader_Init(USBDevice.mDeviceConnection, USBDevice.usbEpIn, USBDevice.usbEpOut);
+        ret = UsbApi.Reader_Init(UDevice.mDeviceConnection, UDevice.usbEpIn, UDevice.usbEpOut);
         System.out.println("--->>>read init=" + ret);
         //上电
         byte[] atr = new byte[64];
@@ -180,9 +180,15 @@ public class IccFrag extends BaseFragment {
   public void onDestroy() {
     super.onDestroy();
     mRunning = false;
+
     if (mHandler != null) {
       mHandler.removeCallbacks(mBackgroundRunnable);
     }
     UsbApi.ICC_Reader_PowerOff(slot);
+    if (UDevice.mDeviceConnection != null) {
+      UDevice.mDeviceConnection.close();
+      UDevice.mDeviceConnection = null;
+      println("index read icc card device close");
+    }
   }
 }

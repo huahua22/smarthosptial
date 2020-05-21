@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.xwr.mulkeyboard.HexUtil;
-import com.xwr.mulkeyboard.usbapi.USBDevice;
+import com.xwr.mulkeyboard.usbapi.UDevice;
 import com.xwr.mulkeyboard.usbapi.UsbApi;
 import com.xwr.mulkeyboard.utils.UsbUtil;
 import com.xwr.smarthosptial.R;
@@ -16,6 +16,8 @@ import com.xwr.smarthosptial.comm.Session;
 import com.zhangke.websocket.WebSocketHandler;
 
 import java.io.UnsupportedEncodingException;
+
+import static com.xwr.smarthosptial.util.UiUtil.println;
 
 
 /**
@@ -68,9 +70,9 @@ public class UnionPaycardsFrag extends BaseFragment {
   @Override
   protected void initData() {
     super.initData();
-    if (USBDevice.mDeviceConnection == null) {
+    if (UDevice.mDeviceConnection == null) {
       try {
-        UsbUtil.getInstance(getContext()).initUsbData();
+        UsbUtil.getInstance(getContext()).initUsbData(0xffff, 0xffff);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
@@ -96,13 +98,13 @@ public class UnionPaycardsFrag extends BaseFragment {
     @Override
     public void run() {
       while (mRunning) {
-        if (USBDevice.mDeviceConnection != null) {
+        if (UDevice.mDeviceConnection != null) {
           //初始化
-          ret = UsbApi.Reader_Init(USBDevice.mDeviceConnection, USBDevice.usbEpIn, USBDevice.usbEpOut);
+          ret = UsbApi.Reader_Init(UDevice.mDeviceConnection, UDevice.usbEpIn, UDevice.usbEpOut);
           System.out.println("--->>>read init=" + ret);
         } else {
           try {
-            UsbUtil.getInstance(getContext()).initUsbData();
+            UsbUtil.getInstance(getContext()).initUsbData(0xffff, 0xffff);
             continue;
           } catch (InterruptedException e) {
             e.printStackTrace();
@@ -175,7 +177,11 @@ public class UnionPaycardsFrag extends BaseFragment {
       mHandler.removeCallbacks(mBackgroundRunnable);
     }
     UsbApi.ICC_Reader_PowerOff(slot);
-
+    if (UDevice.mDeviceConnection != null) {
+      UDevice.mDeviceConnection.close();
+      UDevice.mDeviceConnection = null;
+      println("union read key card device close");
+    }
   }
 
 }

@@ -1,10 +1,12 @@
 package com.xwr.smarthosptial.main;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.xwr.smarthosptial.R;
@@ -13,6 +15,7 @@ import com.xwr.smarthosptial.bean.IncidentalBean;
 import com.xwr.smarthosptial.bean.RecipientBean;
 import com.xwr.smarthosptial.comm.FragmentParms;
 import com.xwr.smarthosptial.comm.Session;
+import com.xwr.smarthosptial.util.QRCodeUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -30,6 +33,12 @@ public class SettleFrag extends BaseFragment {
   @BindView(R.id.tv_total_money)
   TextView mTvTotalMoney;
   Unbinder unbinder;
+  @BindView(R.id.tv_money)
+  TextView mTvMoney;
+  @BindView(R.id.tv_timer)
+  TextView mTvTimer;
+  @BindView(R.id.iv_code)
+  ImageView mIvCode;
   private CountDownTimer timer;
   RecipientBean mRecipientBean = null;
 
@@ -46,11 +55,11 @@ public class SettleFrag extends BaseFragment {
   @Override
   protected void initData() {
     super.initData();
-    timer = new CountDownTimer(30 * 1000, 1000) {
+    timer = new CountDownTimer(50 * 1000, 1000) {
       @Override
       public void onTick(long millisUntilFinished) {
         // TODO Auto-generated method stub
-        //        mTvTimer.setText(millisUntilFinished / 1000 + "s");
+        mTvTimer.setText(millisUntilFinished / 1000 + "s");
       }
 
       @Override
@@ -65,8 +74,12 @@ public class SettleFrag extends BaseFragment {
         IncidentalBean incidentalBean = mRecipientBean.getIncidentalData();
         mTvName.setText(incidentalBean.getName());
         mTvTotalMoney.setText(incidentalBean.getTotalMoney());
+        mTvMoney.setText(incidentalBean.getTotalMoney());
       }
     }
+    //生成的二维码图片
+    Bitmap qr = QRCodeUtil.createQRImage("hello world", 140, 140, null);
+    mIvCode.setImageBitmap(qr);
   }
 
   @Override

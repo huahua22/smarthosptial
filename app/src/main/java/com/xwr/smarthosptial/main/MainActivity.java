@@ -165,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements ChangeFragment {
   protected void onDestroy() {
     super.onDestroy();
     WebSocketHandler.getDefault().removeListener(socketListener);
+//    WebSocketHandler.getDefault().destroy();
   }
 
   @Override

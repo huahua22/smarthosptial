@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 import com.xwr.mulkeyboard.HexUtil;
-import com.xwr.mulkeyboard.usbapi.USBDevice;
+import com.xwr.mulkeyboard.usbapi.UDevice;
 import com.xwr.mulkeyboard.usbapi.UsbApi;
 import com.xwr.mulkeyboard.utils.UsbUtil;
 import com.xwr.smarthosptial.R;
@@ -44,14 +44,14 @@ public class IndexFrag extends BaseFragment {
           println("读取失败，请重新操作");
           break;
         case 1:
-          if (USBDevice.mDeviceConnection == null) {
+          if (UDevice.mDeviceConnection == null) {
             try {
-              UsbUtil.getInstance(getContext()).initUsbData();
+              UsbUtil.getInstance(getContext()).initUsbData(0xffff, 0xffff);
             } catch (InterruptedException e) {
               e.printStackTrace();
             }
           }
-          if (USBDevice.mDeviceConnection != null) {
+          if (UDevice.mDeviceConnection != null) {
             mRunning = true;
             initReadData();
           }
@@ -98,14 +98,14 @@ public class IndexFrag extends BaseFragment {
     mainHandler.post(mBackgroundRunnable);//将线程post到handler中
   }
 
-  //实现扫描窗耗时操作
+  //实现读卡耗时操作
   Runnable mBackgroundRunnable = new Runnable() {
     @Override
     public void run() {
       println(Thread.currentThread().getName());
       while (mRunning) {
         long ret;
-        ret = UsbApi.Reader_Init(USBDevice.mDeviceConnection, USBDevice.usbEpIn, USBDevice.usbEpOut);
+        ret = UsbApi.Reader_Init(UDevice.mDeviceConnection, UDevice.usbEpIn, UDevice.usbEpOut);
         println("read init=" + ret);
         byte[] cardInfo = new byte[1300];
         ret = UsbApi.Syn_Get_Card(cardInfo);
@@ -156,6 +156,11 @@ public class IndexFrag extends BaseFragment {
   public void onDestroyView() {
     super.onDestroyView();
     mRunning = false;
+    if (UDevice.mDeviceConnection != null) {
+      UDevice.mDeviceConnection.close();
+      UDevice.mDeviceConnection = null;
+      println("index read card device close");
+    }
     if (mainHandler != null) {
       mainHandler.removeCallbacks(mBackgroundRunnable);
     }

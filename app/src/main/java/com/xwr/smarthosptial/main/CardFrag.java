@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.xwr.mulkeyboard.HexUtil;
-import com.xwr.mulkeyboard.usbapi.USBDevice;
+import com.xwr.mulkeyboard.usbapi.UDevice;
 import com.xwr.mulkeyboard.usbapi.UsbApi;
 import com.xwr.mulkeyboard.utils.UsbUtil;
 import com.xwr.smarthosptial.R;
@@ -70,6 +70,10 @@ public class CardFrag extends BaseFragment {
   public void onDestroyView() {
     super.onDestroyView();
     unbinder.unbind();
+    if (UDevice.mDeviceConnection != null) {
+      UDevice.mDeviceConnection.close();
+      UDevice.mDeviceConnection = null;
+    }
   }
 
   @OnClick({R.id.readerInit, R.id.powerOn, R.id.readWrite, R.id.powerOff})
@@ -77,13 +81,13 @@ public class CardFrag extends BaseFragment {
     long ret;
     switch (view.getId()) {
       case R.id.readerInit:
-        if (USBDevice.mDeviceConnection != null) {
+        if (UDevice.mDeviceConnection != null) {
           //初始化
-          ret = UsbApi.Reader_Init(USBDevice.mDeviceConnection, USBDevice.usbEpIn, USBDevice.usbEpOut);
+          ret = UsbApi.Reader_Init(UDevice.mDeviceConnection, UDevice.usbEpIn, UDevice.usbEpOut);
           mResult.append("\nread init=" + ret);
         } else {
           try {
-            UsbUtil.getInstance(getContext()).initUsbData();
+            UsbUtil.getInstance(getContext()).initUsbData(0xffff,0xffff);
           } catch (InterruptedException e) {
             e.printStackTrace();
           }

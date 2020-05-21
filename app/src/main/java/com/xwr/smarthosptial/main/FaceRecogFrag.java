@@ -64,6 +64,7 @@ public class FaceRecogFrag extends BaseFragment implements CameraView, IFaceResu
   int faceFlag = 0;
   private int index = 0;
   private int sindex = 0;
+  private boolean faceing = false;
   //权限信息
   private static final String[] NEEDED_PERMISSIONS = new String[]{
     Manifest.permission.READ_PHONE_STATE,
@@ -135,6 +136,7 @@ public class FaceRecogFrag extends BaseFragment implements CameraView, IFaceResu
     initFace();
     initCamera();
     mArcFacePresenter.setOnFaceResultListener(this);
+    faceing = true;
 
   }
 
@@ -241,14 +243,14 @@ public class FaceRecogFrag extends BaseFragment implements CameraView, IFaceResu
       if (result == 1) {
         index = 0;
         sindex++;
-        if (sindex == 15) {
+        if (sindex == 20) {
           mHandler.sendEmptyMessage(2);
           sindex = 0;
         }
       } else {
         sindex = 0;
         index++;
-        if (index == 20) {
+        if (index == 30) {
           mHandler.sendEmptyMessage(3);
           index = 0;
         }

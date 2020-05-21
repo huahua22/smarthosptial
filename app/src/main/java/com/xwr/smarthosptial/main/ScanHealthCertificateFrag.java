@@ -4,13 +4,15 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.xwr.mulkeyboard.KeyboardServer;
-import com.xwr.mulkeyboard.UKeyDevice;
-import com.xwr.mulkeyboard.UKeyUtil;
+import com.xwr.mulkeyboard.usbapi.UDevice;
+import com.xwr.mulkeyboard.utils.UsbUtil;
 import com.xwr.smarthosptial.R;
 import com.xwr.smarthosptial.base.BaseFragment;
 import com.xwr.smarthosptial.comm.Session;
 import com.xwr.smarthosptial.util.UiUtil;
 import com.zhangke.websocket.WebSocketHandler;
+
+import static com.xwr.smarthosptial.util.UiUtil.println;
 
 /**
  * Create by xwr on 2020/4/2
@@ -64,14 +66,14 @@ public class ScanHealthCertificateFrag extends BaseFragment {
     super.initData();
     boolean isConnect = true;
     while (isConnect) {
-      if (UKeyDevice.mDeviceConnection == null) {
+      if (UDevice.mDeviceConnection == null) {
         try {
-          UKeyUtil.getInstance(getActivity()).initUsbData();
+          UsbUtil.getInstance(getActivity()).initUsbData(0x09, 0x09);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
       }
-      if (UKeyDevice.mDeviceConnection != null) {
+      if (UDevice.mDeviceConnection != null) {
         mKeyboardServer = new KeyboardServer();
         mKeyboardServer.key_init();
         isConnect = false;
@@ -92,5 +94,10 @@ public class ScanHealthCertificateFrag extends BaseFragment {
   public void onDestroy() {
     super.onDestroy();
     scaning = false;
+    if (UDevice.mDeviceConnection != null) {
+      UDevice.mDeviceConnection.close();
+      UDevice.mDeviceConnection = null;
+      println("scan health  read key card device close");
+    }
   }
 }
