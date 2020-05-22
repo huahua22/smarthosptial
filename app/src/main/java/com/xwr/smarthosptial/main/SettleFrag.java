@@ -1,6 +1,5 @@
 package com.xwr.smarthosptial.main;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -15,7 +14,6 @@ import com.xwr.smarthosptial.bean.IncidentalBean;
 import com.xwr.smarthosptial.bean.RecipientBean;
 import com.xwr.smarthosptial.comm.FragmentParms;
 import com.xwr.smarthosptial.comm.Session;
-import com.xwr.smarthosptial.util.QRCodeUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -74,12 +72,12 @@ public class SettleFrag extends BaseFragment {
         IncidentalBean incidentalBean = mRecipientBean.getIncidentalData();
         mTvName.setText(incidentalBean.getName());
         mTvTotalMoney.setText(incidentalBean.getTotalMoney());
-        mTvMoney.setText(incidentalBean.getTotalMoney());
+        mTvMoney.setText("¥"+incidentalBean.getTotalMoney());
       }
     }
     //生成的二维码图片
-    Bitmap qr = QRCodeUtil.createQRImage("hello world", 140, 140, null);
-    mIvCode.setImageBitmap(qr);
+//    Bitmap qr = QRCodeUtil.createQRImage("hello world", 140, 140, null);
+//    mIvCode.setImageBitmap(qr);
   }
 
   @Override
